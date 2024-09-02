@@ -1,7 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 const { Article } = require('../model/article');
-const AuthorController = require('../controller/AuthorController')
+const AuthorController = require('../controller/AuthorController');
+const { isNull } = require('util');
+const { User } = require('../model/user');
 
 class ArticleController {
     static async create(req, res) {
@@ -46,28 +48,31 @@ class ArticleController {
 
     static async likeArticle(req, res) {
         const {id} = req.params;
-        const {authorId} = req.body;
+        const {userId} = req.body;
 
         if(!id)
-            return res.status(400).send({message: "No id provider"});
+            return res.status(400).send({message: "No id provided"});
 
         try {
+            
             const article = await Article.findById(id);
 
-            const liked = article.likes.includes(authorId);
+            if (!article) 
+                return res.status(404).send({message: "Article not found"});
 
-            if (!liked) {
-                await Article.findByIdAndUpdate({_id: id}, {likes: --article.likes})
-                return res.status(200).send({message: "Post curtido"});
-            }
+            const liked = article.likes.includes(userId);
 
-            await Article.findByIdAndUpdate({_id: id}, {likes: ++article.likes})
+            if (liked) 
+                article.likes = article.likes.filter(like => like !== userId);
+            else 
+                article.likes.push(userId);
 
-            
-            return res.status(200).send({message: "Post curtido"});
+            await article.save();
+
+            return res.status(200).send({message: `O post contém ${article.likes.length} curtidas`});
         } catch (error) {
             ArticleController.createLog(error);
-            return res.status(500).send({error: "Falaha ao curtir", data: error.message});
+            return res.status(500).send({error: "Falha ao curtir", data: error.message});
         }
     }
 }

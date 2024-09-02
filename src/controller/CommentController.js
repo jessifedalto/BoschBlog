@@ -1,6 +1,6 @@
 const { Article } = require('../model/article');
 const { User } = require('../model/user');
-
+const { Comment } = require('../model/comment');
 
 class CommentController {
     static async addComment(req, res) {
@@ -21,9 +21,14 @@ class CommentController {
             if (!user) 
                 return res.status(404).send({message: "User not found"});
 
-            article.comments.push({text, user: userId, createdAt: Date.now(), articleId: id});
+            const comment = {
+                text,
+                user: userId,
+                articleId: id,
+                createdAt: Date.now()
+            }
 
-            await article.save();
+            await Comment.create(comment);
 
             return res.status(200).send({ message: "Comentário adicionado"});
         } catch (error) {

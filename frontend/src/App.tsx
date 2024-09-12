@@ -9,15 +9,15 @@ function App() {
     <>
       <Routes>
         <Route path='/' element={<LoginPage/>} />
-        <Route path='/teste' element={<h1>Main page</h1>} />
-        <Route path='/main' element={
+        <Route path='/teste' element={<NavBar />} />
+        {/* <Route path='/main' element={
           <ProtectedRoute
             errorPage={<h1>Você não está logado</h1>}
             targetPage={<NavBar />}
           />
         }>
           <Route path='' element={<LoginPage />} />
-        </Route>
+        </Route> */}
         <Route path='*' element={<h1 children={"olá"}/>} />
       </Routes>
     </>

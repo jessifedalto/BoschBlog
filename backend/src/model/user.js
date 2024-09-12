@@ -4,9 +4,9 @@ const { authorSchema } = require('./author');
 const userSchema = new mongoose.Schema({
     author: {
         type: authorSchema,
-        required: true
+        required: false
     },
-    login: {
+    name: {
         type: String,
         required: true,
         minlength: 3

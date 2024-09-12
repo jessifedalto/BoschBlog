@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 
 interface ITheme {
     theme: "light" | "dark";
@@ -17,8 +17,15 @@ export const ThemeProvider = ({ children } :{children: ReactNode}) => {
         const newImage = image === "moon.png" ? "sun.png" : "moon.png"
         setTheme(newTheme);
         setImage(newImage);
-        document.body.style.backgroundColor = newTheme === "dark" ? "#2f1313" : "#F2EBBF";
     };
+    
+    const updateBackgroundColor = () => {
+        document.body.style.backgroundColor = theme === "dark" ? "#2f1313" : "#F2EBBF";
+    }
+
+    useEffect(() => {
+        updateBackgroundColor();
+    }, [theme]);
 
     return(
         <ThemeContext.Provider

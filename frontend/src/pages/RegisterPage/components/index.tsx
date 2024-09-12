@@ -1,12 +1,13 @@
 import { FormEvent, useContext, useState } from "react";
-import { ButtonContent, LinkContent, StyledButton, StyledContent, StyledForm, StyledInput, StyledLabel, StyledLink, Title } from "./styles";
+import { ButtonContent, StyledButton, StyledContent, StyledForm, StyledInput, StyledLabel, Title } from "./styles";
 import { ThemeContext } from "../../../context/theme";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export default function Forms() {
+export default function RegisterForm() {
     const navigate = useNavigate();
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { theme } = useContext(ThemeContext);
@@ -14,18 +15,19 @@ export default function Forms() {
     async function handleClick(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:8080/api/auth/login",
+            const res = await axios.post("http://localhost:8080/api/person/register",
                 {
+                    name: name,
                     email: email,
-                    password: password
+                    password: password,
+                    createdAt: Date.now()
                 }
             )
 
-            if (res.status === 200 && res.data.token) {
-                sessionStorage.setItem("token", res.data.token);
+            if (res.status === 201) {
                 setEmail("");
                 setPassword("");
-                navigate("/main");
+                navigate("/");
                 toast.success("Login succeeded");
             }
             else {
@@ -43,7 +45,15 @@ export default function Forms() {
             
                 <StyledForm theme={theme} onSubmit={(e) => handleClick(e)}>
                     <StyledContent>
-                        <Title>Login</Title>
+                        <Title>Registro</Title>
+                        <StyledLabel>Nome:</StyledLabel>
+                        <StyledInput
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            type="text"
+                            placeholder="Digite seu nome"
+                            required
+                        />
                         <StyledLabel>Email:</StyledLabel>
                         <StyledInput
                             value={email}
@@ -60,11 +70,8 @@ export default function Forms() {
                             placeholder="Digite sua senha"
                             required
                         />
-                        <LinkContent>
-                            <StyledLink to="/register">Não tenho uma conta</StyledLink>
-                        </LinkContent>
                         <ButtonContent>
-                            <StyledButton type="submit">ENTRAR</StyledButton>
+                            <StyledButton type="submit">CADASTRAR</StyledButton>
                         </ButtonContent>
                     </StyledContent>
                 </StyledForm>

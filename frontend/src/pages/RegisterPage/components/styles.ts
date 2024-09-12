@@ -15,7 +15,7 @@ export const Title = styled.h1`
     font-size: xx-large;
     display: flex;
     justify-content: center;
-    padding: 50px;
+    padding: 40px;
 `
 
 export const StyledInput = styled.input`

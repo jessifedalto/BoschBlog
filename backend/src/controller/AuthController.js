@@ -1,7 +1,9 @@
 const User = require('../model/user').User;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { AES } = require('crypto-ts');
 require('dotenv').config();
+const CryptoTS = require('crypto-ts'); 
 
 class AuthController {
     static async register(req, res) {
@@ -34,22 +36,34 @@ class AuthController {
     static async login(req, res) {
         const { email, password } = req.body;
 
-        if (!email || !password)
-            return res.status(400).send({ message: "Invalid data" });
+        try {
 
-        let user = await User.findOne({ email: email });
-
-        if (!user || !await bcrypt.compare(password, user.password)) {
-            return res.status(400).send({ message: "Invalid Email or password"});
+            
+            var decryptEmailBytes = AES.decrypt(toString(email), process.env.VITE_AES_SECRET);
+            var decryptEmail = decryptEmailBytes.toString(CryptoTS.enc.Utf8);
+            
+            var decryptPasswordBytes = AES.decrypt(toString(password), process.env.VITE_AES_SECRET);
+            var decryptPassword = decryptPasswordBytes.toString(CryptoTS.enc.Utf8);
+            
+            if (!decryptEmail || !decryptPassword)
+                return res.status(400).send({ message: "Invalid data" });
+            
+            let user = await User.findOne({ email: decryptEmail });
+            
+            if (!user || !await bcrypt.compare(decryptPassword, user.password)) {
+                return res.status(400).send({ message: "Invalid Email or password"});
+            }
+            
+            const tk = jwt.sign(
+                { id: user._id },
+                process.env.SECRET,
+                { expiresIn: '2d' }
+            );
+            return res.status(200).send({ token: tk });
+        } catch (error) {
+            return res.status(500).send({ message: "Error processing request" });
         }
 
-        const tk = jwt.sign(
-            { id: user._id },
-            process.env.SECRET,
-            { expiresIn: '2d' }
-        );
-
-        return res.status(200).send({ token: tk });
 
     }
 }

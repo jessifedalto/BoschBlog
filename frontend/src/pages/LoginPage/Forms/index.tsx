@@ -4,20 +4,27 @@ import { ThemeContext } from "../../../context/theme";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AES } from "crypto-ts";
 
 export default function Forms() {
     const navigate = useNavigate();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
     const { theme } = useContext(ThemeContext);
 
     async function handleClick(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+
+        const secretKey = import.meta.env.VITE_AES_SECRET as string;
+
+        const encryptedEmail = AES.encrypt(email, secretKey).toString();
+        const encryptedPassword = AES.encrypt(password, secretKey).toString();
+ 
         try {
             const res = await axios.post("http://localhost:8080/api/auth/login",
                 {
-                    email: email,
-                    password: password
+                    email: encryptedEmail,
+                    password: encryptedPassword
                 }
             )
 

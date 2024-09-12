@@ -8,9 +8,18 @@ class AuthController {
     static async register(req, res) {
         const { name, email, password } = req.body;
         try {
+            var decryptNameBytes = CryptoTS.AES.decrypt(name.toString(), process.env.VITE_AES_SECRET);
+            var decryptName = decryptNameBytes.toString(CryptoTS.enc.Utf8);
+
+            var decryptEmailBytes = CryptoTS.AES.decrypt(email.toString(), process.env.VITE_AES_SECRET);
+            var decryptEmail = decryptEmailBytes.toString(CryptoTS.enc.Utf8);
+            
+            var decryptPasswordBytes = CryptoTS.AES.decrypt(password.toString(), process.env.VITE_AES_SECRET);
+            var decryptPassword = decryptPasswordBytes.toString(CryptoTS.enc.Utf8);
+
             const salt = await bcrypt.genSalt(12);
 
-            const passwordHash = await bcrypt.hash(password, salt);
+            const passwordHash = await bcrypt.hash(decryptPassword, salt);
 
             const find = await User.findOne({ email });
 
@@ -18,8 +27,8 @@ class AuthController {
                 return res.status(400).send({ message: "Email is used in another account" });
 
             const user = new User({
-                name,
-                email,
+                name: decryptName,
+                email: decryptEmail,
                 password: passwordHash,
                 createdAt: Date.now()
             });

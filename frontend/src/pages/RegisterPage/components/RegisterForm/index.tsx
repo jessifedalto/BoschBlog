@@ -1,9 +1,10 @@
 import { FormEvent, useContext, useState } from "react";
 import { ButtonContent, StyledButton, StyledContent, StyledForm, StyledInput, StyledLabel, Title } from "./styles";
-import { ThemeContext } from "../../../context/theme";
+import { ThemeContext } from "../../../../context/theme";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AES } from "crypto-ts";
 
 export default function RegisterForm() {
     const navigate = useNavigate();
@@ -14,12 +15,19 @@ export default function RegisterForm() {
 
     async function handleClick(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+
+        const secretKey = import.meta.env.VITE_AES_SECRET as string;
+
+        const encryptedName = AES.encrypt(name, secretKey).toString();
+        const encryptedEmail = AES.encrypt(email, secretKey).toString();
+        const encryptedPassword = AES.encrypt(password, secretKey).toString();
+        
         try {
             const res = await axios.post("http://localhost:8080/api/person/register",
                 {
-                    name: name,
-                    email: email,
-                    password: password,
+                    name: encryptedName,
+                    email: encryptedEmail,
+                    password: encryptedPassword,
                     createdAt: Date.now()
                 }
             )

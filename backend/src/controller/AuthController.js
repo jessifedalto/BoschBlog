@@ -1,9 +1,8 @@
 const User = require('../model/user').User;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { AES } = require('crypto-ts');
+const CryptoTS = require('crypto-ts');
 require('dotenv').config();
-const CryptoTS = require('crypto-ts'); 
 
 class AuthController {
     static async register(req, res) {
@@ -38,11 +37,10 @@ class AuthController {
 
         try {
 
-            
-            var decryptEmailBytes = AES.decrypt(toString(email), process.env.VITE_AES_SECRET);
+            var decryptEmailBytes = CryptoTS.AES.decrypt(email.toString(), process.env.VITE_AES_SECRET);
             var decryptEmail = decryptEmailBytes.toString(CryptoTS.enc.Utf8);
             
-            var decryptPasswordBytes = AES.decrypt(toString(password), process.env.VITE_AES_SECRET);
+            var decryptPasswordBytes = CryptoTS.AES.decrypt(password.toString(), process.env.VITE_AES_SECRET);
             var decryptPassword = decryptPasswordBytes.toString(CryptoTS.enc.Utf8);
             
             if (!decryptEmail || !decryptPassword)
@@ -61,6 +59,7 @@ class AuthController {
             );
             return res.status(200).send({ token: tk });
         } catch (error) {
+            console.log(error);
             return res.status(500).send({ message: "Error processing request" });
         }
 

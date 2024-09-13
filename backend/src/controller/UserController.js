@@ -29,6 +29,7 @@ class AuthControler {
             return res.status(400).send({ message: "Insira um e-mail válido" })
 
         const passwordCrypt = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
+        
         const author = new Author({
             name,
             birth,
@@ -36,6 +37,7 @@ class AuthControler {
             updatedAt: Date.now(),
             removedAt: null,
         })
+
         const user = new User({
             login: email,
             author,
@@ -47,6 +49,7 @@ class AuthControler {
         });
 
         try {
+            await Author.create(author);
             await User.create(user);
             res.status(201).send({ message: "Usuário cadastrado com sucesso" });
         } catch (error) {

@@ -34,7 +34,7 @@ export const StyledContent = styled.div`
     width: 100%;
     height: 100%;
     flex-direction: column;
-    gap: 15px;
+    gap: 3px;
 `
 
 export const StyledLabel = styled.label`

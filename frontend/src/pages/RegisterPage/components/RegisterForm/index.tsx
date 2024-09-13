@@ -10,7 +10,9 @@ export default function RegisterForm() {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [birth, setBirth] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPass, setConfirmPass] = useState("");
     const { theme } = useContext(ThemeContext);
 
     async function handleClick(e: FormEvent<HTMLFormElement>) {
@@ -20,14 +22,18 @@ export default function RegisterForm() {
 
         const encryptedName = AES.encrypt(name, secretKey).toString();
         const encryptedEmail = AES.encrypt(email, secretKey).toString();
+        const encryptedBirth = AES.encrypt(birth, secretKey).toString();
         const encryptedPassword = AES.encrypt(password, secretKey).toString();
-        
+        const encryptedConfirm = AES.encrypt(confirmPass, secretKey).toString();
+
         try {
             const res = await axios.post("http://localhost:8080/api/person/register",
                 {
                     name: encryptedName,
+                    birth: encryptedBirth,
                     email: encryptedEmail,
                     password: encryptedPassword,
+                    confirmPassword: encryptedConfirm,
                     createdAt: Date.now()
                 }
             )
@@ -50,40 +56,56 @@ export default function RegisterForm() {
 
     return (
         <>
-            
-                <StyledForm theme={theme} onSubmit={(e) => handleClick(e)}>
-                    <StyledContent>
-                        <Title>Registro</Title>
-                        <StyledLabel>Nome:</StyledLabel>
-                        <StyledInput
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            type="text"
-                            placeholder="Digite seu nome"
-                            required
-                        />
-                        <StyledLabel>Email:</StyledLabel>
-                        <StyledInput
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            type="email"
-                            placeholder="Digite seu email"
-                            required
-                        />
-                        <StyledLabel>Senha:</StyledLabel>
-                        <StyledInput
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            type="password"
-                            placeholder="Digite sua senha"
-                            required
-                        />
-                        <ButtonContent>
-                            <StyledButton type="submit">CADASTRAR</StyledButton>
-                        </ButtonContent>
-                    </StyledContent>
-                </StyledForm>
-        
+
+            <StyledForm theme={theme} onSubmit={(e) => handleClick(e)}>
+                <StyledContent>
+                    <Title>Registro</Title>
+                    <StyledLabel>Nome:</StyledLabel>
+                    <StyledInput
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        type="text"
+                        placeholder="Digite seu nome"
+                        required
+                    />
+                    <StyledLabel>Email:</StyledLabel>
+                    <StyledInput
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        type="email"
+                        placeholder="Digite seu email"
+                        required
+                    />
+                    <StyledLabel>Data de nascimento:</StyledLabel>
+                    <StyledInput
+                        value={birth}
+                        onChange={(e) => setBirth(e.target.value)}
+                        type="date"
+                        placeholder="Digite sua senha"
+                        required
+                    />
+                    <StyledLabel>Senha:</StyledLabel>
+                    <StyledInput
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        type="password"
+                        placeholder="Digite sua senha"
+                        required
+                    />
+                    <StyledLabel>Confirme a Senha:</StyledLabel>
+                    <StyledInput
+                        value={confirmPass}
+                        onChange={(e) => setConfirmPass(e.target.value)}
+                        type="password"
+                        placeholder="Digite sua senha"
+                        required
+                    />
+                    <ButtonContent>
+                        <StyledButton type="submit">CADASTRAR</StyledButton>
+                    </ButtonContent>
+                </StyledContent>
+            </StyledForm>
+
         </>
     )
 }

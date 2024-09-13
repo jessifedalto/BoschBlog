@@ -23,7 +23,6 @@ export const ModalOverlay = styled.div`
 `;
 
 export const ModalContent = styled.div`
-    background: white;
     padding: 20px;
     border-radius: 5px;
     width: 80%;
@@ -72,4 +71,16 @@ export const StyledLabel = styled.label`
     font-size: large;
     padding-left: 45px;
     align-self: flex-start;
+`
+
+export const HeaderModal = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+`
+
+export const Image = styled.img`
+    height: 25%;
+    padding: 20px;
+    cursor: pointer;
 `

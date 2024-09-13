@@ -19,12 +19,12 @@ const articleSchema = new mongoose.Schema({
     },
     likes: {
         type: [String],
-        required: true
+        required: false
     },
     comments: [commentSchema],
     createdAt: {
         type: Date,
-        required: true
+        required: false
     },
     updatedAt: {
         type: Date,

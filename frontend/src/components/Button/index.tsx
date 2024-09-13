@@ -1,12 +1,17 @@
-import { ButtonDiv, StyledButton } from "./styles";
+import { ButtonHTMLAttributes } from "react";
+import { StyledButton } from "./styles";
 
-export default function Button()
+interface IButtonProps {
+    children: string;
+}
+
+export default function Button({children, ...props}: IButtonProps & ButtonHTMLAttributes<HTMLButtonElement>)
 {
     return (
         <>
-            <ButtonDiv>
-                <StyledButton/>
-            </ButtonDiv>
+            <StyledButton {...props}>
+                {children}
+            </StyledButton>
         </>
     )
 }

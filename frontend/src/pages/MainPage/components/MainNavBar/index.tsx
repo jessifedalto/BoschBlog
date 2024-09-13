@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../../../context/theme";
 import { StyledHeader, Image, StyledLink } from "./styles"
 import { useContext } from "react";
@@ -5,6 +6,12 @@ import { useContext } from "react";
 export default function MainNavBar() {
 
     const { image, toggleTheme } = useContext(ThemeContext)
+    const navigate = useNavigate();
+
+    function logOut() {
+        sessionStorage.clear();
+        navigate("/");    
+    }
     return (
         <>
             <StyledHeader>
@@ -13,7 +20,7 @@ export default function MainNavBar() {
                 </StyledLink>
                 <p>Bosch Blog</p>
                 <Image src={image} onClick={() => toggleTheme()}></Image>
-                <Image src="logout.png" onClick={() => toggleTheme()}></Image>
+                <Image src="logout.png" onClick={() => logOut()}></Image>
             </StyledHeader>
         </>
     )

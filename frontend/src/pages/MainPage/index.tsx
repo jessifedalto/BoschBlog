@@ -1,18 +1,92 @@
+import { FormEvent, useContext, useState } from "react";
 import Button from "../../components/Button";
+import Body from "./components/Body";
 import MainNavBar from "./components/MainNavBar";
 import Table from "./components/Table";
+import { ButtonDiv, ModalContent, ModalOverlay, StyledContent, StyledForm, StyledInput, StyledLabel, Title } from "./styles";
+import { ThemeContext } from "../../context/theme";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-export default function MainPage()
-{
+export default function MainPage() {
+    const [isModalOpen, setIsModalOpen] = useState(false);    
+    const { theme } = useContext(ThemeContext);
+
+    const [title, setTitle] = useState("");
+    const [text, setText] = useState("");
+
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
+    async function handleClick(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        
+        try {
+            const res = await axios.post("http://localhost:8080/api/person/register",
+                {
+                    title: title,
+                    text: text,
+                    author: text,
+                    createdAt: Date.now()
+                }
+            )
+
+            if (res.status === 201) {
+                setText("");
+                setText("");
+            }
+            else {
+                toast.error("Falha ao postar artigo")
+            }
+        }
+        catch (error) {
+            toast.error("An error occurred. Please try again")
+            console.log(error);
+        }
+    }
+
     return (
         <>
-            <MainNavBar/>
-            
-
-                <Button/>
-                {/* <Table/> */}
+            <MainNavBar />
+            <Body>
+                <ButtonDiv>
+                    <Button onClick={openModal}>Adicionar Artigo</Button>
+                    <Button>Tornar-se um autor</Button>
+                </ButtonDiv>
+                {/* <Table /> */}
                 <a>AAAA</a>
-            
+
+                {isModalOpen && (
+                    <ModalOverlay>
+                        <ModalContent>
+                            <StyledForm theme={theme} onSubmit={(e) => handleClick(e)}>
+                                <StyledContent>
+                                    <Title>Artigo</Title>
+                                    <StyledLabel>Título:</StyledLabel>
+                                    <StyledInput
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        type="text"
+                                        placeholder="Digite um título"
+                                        required
+                                    />
+                                    <StyledLabel>Texto:</StyledLabel>
+                                    <StyledInput
+                                        value={text}
+                                        onChange={(e) => setText(e.target.value)}
+                                        type="email"
+                                        placeholder="Digite o texto"
+                                        required
+                                    />
+                                </StyledContent>
+                            </StyledForm>
+                            <Button onClick={closeModal}>Fechar</Button>
+                        </ModalContent>
+                    </ModalOverlay>
+                )}
+            </Body>
+
         </>
     )
 }

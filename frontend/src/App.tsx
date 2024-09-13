@@ -2,8 +2,8 @@ import { Route, Routes } from 'react-router-dom'
 import './styles/global.css'
 import LoginPage from './pages/LoginPage'
 import ProtectedRoute from './pages/ProtectedRoute'
-import NavBar from './components/NavBar'
 import RegisterPage from './pages/RegisterPage'
+import MainPage from './pages/MainPage'
 
 function App() {
 
@@ -15,7 +15,7 @@ function App() {
         <Route path='/main' element={
           <ProtectedRoute
             errorPage={<h1>Você não está logado</h1>}
-            targetPage={<NavBar />}
+            targetPage={<MainPage/>}
           />
         }>
           <Route path='' element={<LoginPage />} />

@@ -28,8 +28,11 @@ export default function Forms() {
                 }
             )
 
+            console.log(res);
             if (res.status === 200 && res.data.token) {
                 sessionStorage.setItem("token", res.data.token);
+                sessionStorage.setItem("id", res.data.author);
+
                 setEmail("");
                 setPassword("");
                 navigate("/main");

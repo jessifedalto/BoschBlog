@@ -1,15 +1,14 @@
 const path = require('path');
 const fs = require('fs');
-const { Article } = require('../model/article');
+const Article = require('../model/article').Article;
 const AuthorController = require('../controller/AuthorController');
-const { isNull } = require('util');
-const { User } = require('../model/user');
 
 class ArticleController {
     static async create(req, res) {
         const { title, text, authorid } = req.body;
+
         if (!title || !text || !authorid)
-            return res.status(400).send({ message: "os campos não podem estarem vazios " });
+            return res.status(400).send({ message: "os campos não podem estar vazios " });
 
         if (title.length < 3)
             return res.status(400).send({ message: "o titulo não pode ser menor que 3 caracteres" });
@@ -73,6 +72,16 @@ class ArticleController {
         } catch (error) {
             ArticleController.createLog(error);
             return res.status(500).send({error: "Falha ao curtir", data: error.message});
+        }
+    }
+
+    static async getAll(req, res) {
+        try {
+            const articles = await Article.find();
+
+            return res.status(200).send({article: articles});
+        } catch(error) {
+            return res.status(500).send({error: error});
         }
     }
 }

@@ -5,5 +5,6 @@ const route = express.Router();
 route
     .post('/', ArticleController.create)
     .post('/like/:id', ArticleController.likeArticle)
+    .get('/get', ArticleController.getAll);
 
 module.exports = route;

@@ -14,7 +14,7 @@ const articleSchema = new mongoose.Schema({
         minlength: 15
     },
     author: {
-        type: authorSchema,
+        type: String,
         required: true
     },
     likes: {

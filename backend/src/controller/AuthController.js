@@ -1,7 +1,7 @@
 const User = require('../model/user').User;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { Author } = require('../model/author').Author;
+const Author  = require('../model/author').Author;
 const CryptoTS = require('crypto-ts');
 require('dotenv').config();
 
@@ -14,6 +14,9 @@ class AuthController {
 
         if (!email)
             return res.status(400).json({ message: "O e-mail é obrigatório" });
+
+        if (!birth)
+            return res.status(400).json({ message: "A data de nascimento é obrigatória" });
 
         if (!password)
             return res.status(400).json({ message: "A senha é obrigatória" });
@@ -31,6 +34,7 @@ class AuthController {
 
             var decryptPasswordBytes = CryptoTS.AES.decrypt(password.toString(), process.env.VITE_AES_SECRET);
             var decryptPassword = decryptPasswordBytes.toString(CryptoTS.enc.Utf8);
+
             var decryptConfirmBytes = CryptoTS.AES.decrypt(confirmPassword.toString(), process.env.VITE_AES_SECRET);
             var decryptConfirmPassword = decryptConfirmBytes.toString(CryptoTS.enc.Utf8);
 
@@ -54,13 +58,7 @@ class AuthController {
             if (find)
                 return res.status(400).send({ message: "Email is used in another account" });
 
-            const user = new User({
-                name: decryptName,
-                email: decryptEmail,
-                password: passwordHash,
-                createdAt: Date.now()
-            });
-
+            
             const author = new Author({
                 name: decryptName,
                 birth: decryptBirth,
@@ -69,11 +67,20 @@ class AuthController {
                 removedAt: null,
             })
 
+            const user = new User({
+                author,
+                name: decryptName,
+                email: decryptEmail,
+                password: passwordHash,
+                createdAt: Date.now()
+            });
+
             await author.save();
             await user.save();
             res.status(201).send({ message: "User created successfully" });
 
         } catch (error) {
+            console.log(error);
             return res.status(500).send({ message: "Something failed" })
         }
     }
@@ -103,7 +110,10 @@ class AuthController {
                 process.env.SECRET,
                 { expiresIn: '2d' }
             );
-            return res.status(200).send({ token: tk });
+      
+            const authorId = user.author._id;
+
+            return res.status(200).send({ token: tk , author : authorId});
         } catch (error) {
             console.log(error);
             return res.status(500).send({ message: "Error processing request" });

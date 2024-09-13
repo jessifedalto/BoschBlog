@@ -15,7 +15,8 @@ function App() {
         <Route path='/main' element={
           <ProtectedRoute
             errorPage={<h1>Você não está logado</h1>}
-            targetPage={<MainPage/>}
+            targetPage={
+            <MainPage/>}
           />
         }>
           <Route path='' element={<LoginPage />} />
